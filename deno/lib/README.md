@@ -2299,7 +2299,7 @@ This can be useful for documenting a field, for example in a JSON Schema using a
 Use `.exemplify()` to add to the `examples` property to the resulting schema.
 
 ```ts
-const exemplifiedString = z.string().example("Lorem ipsum dolor sit amet.");
+const exemplifiedString = z.string().exemplify("Lorem ipsum dolor sit amet.");
 documentedString.examples; // ['Lorem ipsum dolor…
 ```
 
