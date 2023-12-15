@@ -53,10 +53,10 @@ export type output<T extends ZodType<any, any, any>> = T["_output"];
 export type { TypeOf as infer };
 
 export type CustomErrorParams = Partial<util.Omit<ZodCustomIssue, "code">>;
-export interface ZodTypeDef {
+export interface ZodTypeDef<T extends ZodTypeAny = ZodTypeAny> {
   errorMap?: ZodErrorMap;
   description?: string;
-  examples?: unknown[];
+  examples?: T["_output"][];
 }
 
 class ParseInputLazyPath implements ParseInput {
@@ -120,13 +120,13 @@ export type RawCreateParams =
       invalid_type_error?: string;
       required_error?: string;
       description?: string;
-      examples?: unknown[];
+      examples?: ZodTypeAny["_output"][];
     }
   | undefined;
 export type ProcessedCreateParams = {
   errorMap?: ZodErrorMap;
   description?: string;
-  examples?: unknown[];
+  examples?: ZodTypeAny["_output"][];
 };
 function processCreateParams(params: RawCreateParams): ProcessedCreateParams {
   if (!params) return {};
@@ -174,7 +174,7 @@ export abstract class ZodType<
     return this._def.description;
   }
 
-  get examples(): unknown[] {
+  get examples(): ParseReturnType<Output>[] {
     return this._def.examples ?? [];
   }
 
@@ -500,7 +500,7 @@ export abstract class ZodType<
     });
   }
 
-  exemplify(example: unknown): this {
+  exemplify(example: ParseReturnType<this["_output"]>): this {
     const This = (this as any).constructor;
 
     const examples = this._def.examples ?? [];
@@ -597,6 +597,7 @@ const ipv4Regex =
 
 const ipv6Regex =
   /^(([a-f0-9]{1,4}:){7}|::([a-f0-9]{1,4}:){0,6}|([a-f0-9]{1,4}:){1}:([a-f0-9]{1,4}:){0,5}|([a-f0-9]{1,4}:){2}:([a-f0-9]{1,4}:){0,4}|([a-f0-9]{1,4}:){3}:([a-f0-9]{1,4}:){0,3}|([a-f0-9]{1,4}:){4}:([a-f0-9]{1,4}:){0,2}|([a-f0-9]{1,4}:){5}:([a-f0-9]{1,4}:){0,1})([a-f0-9]{1,4}|(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2})))$/;
+/^(([a-f0-9]{1,4}:){7}|::([a-f0-9]{1,4}:){0,6}|([a-f0-9]{1,4}:){1}:([a-f0-9]{1,4}:){0,5}|([a-f0-9]{1,4}:){2}:([a-f0-9]{1,4}:){0,4}|([a-f0-9]{1,4}:){3}:([a-f0-9]{1,4}:){0,3}|([a-f0-9]{1,4}:){4}:([a-f0-9]{1,4}:){0,2}|([a-f0-9]{1,4}:){5}:([a-f0-9]{1,4}:){0,1})([a-f0-9]{1,4}|(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2})))$/;
 
 // Adapted from https://stackoverflow.com/a/3143231
 const datetimeRegex = (args: { precision: number | null; offset: boolean }) => {
