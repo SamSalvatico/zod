@@ -174,7 +174,7 @@ export abstract class ZodType<
     return this._def.description;
   }
 
-  get examples(): ParseReturnType<Output>[] {
+  get examples(): Output[] {
     return this._def.examples ?? [];
   }
 
@@ -500,7 +500,7 @@ export abstract class ZodType<
     });
   }
 
-  exemplify(example: ParseReturnType<this["_output"]>): this {
+  exemplify(example: this["_output"]): this {
     const This = (this as any).constructor;
 
     const examples = this._def.examples ?? [];

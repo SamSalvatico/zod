@@ -3,7 +3,7 @@ import { expect, test } from "@jest/globals";
 
 import * as z from "../index";
 
-const examples = [ "an example" ];
+const examples: [string, number, boolean] = [ "an example", 123, true ];
 
 test("passing `examples` to schema should add a examples", () => {
   expect(z.string({ examples }).examples).toEqual(examples);
@@ -12,9 +12,9 @@ test("passing `examples` to schema should add a examples", () => {
 });
 
 test("`.exemplify` should add an example", () => {
-  expect(z.string().exemplify(examples[0]).examples).toEqual(examples);
-  expect(z.number().exemplify(examples[0]).examples).toEqual(examples);
-  expect(z.boolean().exemplify(examples[0]).examples).toEqual(examples);
+  expect(z.string().exemplify(examples[0]).examples).toEqual([examples[0]]);
+  expect(z.number().exemplify(examples[1]).examples).toEqual([examples[1]]);
+  expect(z.boolean().exemplify(examples[2]).examples).toEqual([examples[2]]);
 });
 
 test("examples should carry over to chained schemas", () => {
@@ -27,15 +27,12 @@ test("examples should carry over to chained schemas", () => {
 });
 
 test("`.exemplify` should be chainable", () => {
-  const schema = z.string({ examples: [123] });
-  expect(schema.examples).toEqual([123]);
+  const schema = z.string({ examples: ['in constructor'] });
+  expect(schema.examples).toEqual(['in constructor']);
 
   schema.exemplify('example 1');
-  expect(schema.examples).toEqual([123, 'example 1']);
+  expect(schema.examples).toEqual(['in constructor', 'example 1']);
 
-  schema.exemplify(true);
-  expect(schema.examples).toEqual([123, 'example 1', true]);
-
-  schema.exemplify({ foo: 'bar' });
-  expect(schema.examples).toEqual([123, 'example 1', true, { foo: 'bar' }]);
+  schema.exemplify('another example');
+  expect(schema.examples).toEqual(['in constructor', 'example 1', 'another example']);
 });
